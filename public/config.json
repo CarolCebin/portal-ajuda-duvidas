@@ -1,0 +1,11 @@
+{
+  "emailjs": {
+    "serviceId": "",
+    "templateId": "",
+    "publicKey": "",
+    "supportEmail": ""
+  },
+  "analytics": {
+    "measurementId": ""
+  }
+}

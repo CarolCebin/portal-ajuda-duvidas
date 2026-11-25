@@ -1,0 +1,813 @@
+{
+  "demonstracao": true,
+  "categorias": [
+    {
+      "id": "primeiros-passos",
+      "nome": "Primeiros passos",
+      "descricao": "Tudo o que você precisa para começar a usar o aplicativo.",
+      "icone": "rocket"
+    },
+    {
+      "id": "perfil-preferencias",
+      "nome": "Perfil e preferências",
+      "descricao": "Personalize suas informações e deixe tudo do seu jeito.",
+      "icone": "user"
+    },
+    {
+      "id": "pagamentos",
+      "nome": "Pagamentos e cobranças",
+      "descricao": "Encontre orientações sobre pagamentos e comprovantes.",
+      "icone": "wallet"
+    },
+    {
+      "id": "privacidade",
+      "nome": "Privacidade e segurança",
+      "descricao": "Saiba como cuidar dos seus dados e da sua privacidade.",
+      "icone": "shield"
+    },
+    {
+      "id": "recursos",
+      "nome": "Recursos do aplicativo",
+      "descricao": "Descubra funcionalidades para facilitar seu dia a dia.",
+      "icone": "grid"
+    },
+    {
+      "id": "solucoes",
+      "nome": "Solução de problemas",
+      "descricao": "Resolva imprevistos e volte a usar o aplicativo.",
+      "icone": "tool"
+    }
+  ],
+  "topicos": [
+    {
+      "id": "conheca-o-aplicativo",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Conheça o aplicativo e dê os primeiros passos",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Neste exemplo fictício, a tela inicial reúne os principais recursos do aplicativo. Você pode explorar cada área no seu ritmo e consultar esta central sempre que precisar."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Observe os atalhos apresentados na tela inicial.",
+            "Explore o menu de recursos para conhecer as áreas disponíveis.",
+            "Acesse as preferências para ajustar a experiência.",
+            "Quando surgir uma dúvida, procure uma palavra ou frase nesta central."
+          ]
+        },
+        {
+          "tipo": "imagem",
+          "url": "/media/primeiros-passos.svg",
+          "alt": "Três passos ilustrados: explore a tela inicial, ajuste suas preferências e encontre orientações.",
+          "legenda": "Imagem ilustrativa do aplicativo fictício."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Continue explorando"
+        },
+        {
+          "tipo": "paragrafo",
+          "texto": "Você não precisa seguir todos os caminhos de uma vez. Escolha o assunto mais próximo da sua dúvida e volte a esta central sempre que precisar."
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "navegar-tela-inicial",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Como navegar pela tela inicial",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "A tela inicial do aplicativo demonstra como organizar atalhos e informações em um só lugar. Os nomes e os caminhos deste tutorial são ilustrativos."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra a tela inicial.",
+            "Leia o nome de cada atalho antes de selecionar.",
+            "Escolha a área que deseja explorar.",
+            "Use o controle de voltar para retornar à tela anterior."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "encontrar-recursos",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Onde encontrar os recursos do aplicativo",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "O menu de recursos organiza as funções do aplicativo por assunto. Neste conteúdo de demonstração, os caminhos representam uma experiência fictícia."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Localize o menu de recursos.",
+            "Consulte as opções disponíveis.",
+            "Selecione a função desejada.",
+            "Se precisar de orientação, pesquise o nome da função na central."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "usar-central-ajuda",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Como usar a Central de Ajuda",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "A central permite consultar orientações do aplicativo por categoria ou pela busca. A pesquisa encontra uma frase completa no título ou no conteúdo dos tópicos."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Escolha uma categoria para ver os tópicos relacionados.",
+            "Use Anterior e Próxima para navegar quando houver mais de dez tópicos.",
+            "Abra um tópico para ler o conteúdo completo.",
+            "Se a dúvida continuar, use Falar com o suporte dentro do tópico."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "pesquisar-orientacoes",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Como pesquisar uma orientação",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Pesquise uma palavra ou frase para encontrar tópicos do aplicativo. A busca ignora diferenças de letras maiúsculas, minúsculas e acentos."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Digite o que deseja encontrar no campo de busca.",
+            "Selecione Buscar ou pressione Enter.",
+            "Abra um dos resultados para ler as orientações.",
+            "Se não houver resultados, tente outro termo ou acesse o suporte disponível nessa tela."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "ajustar-notificacoes",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Como ajustar as notificações",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "As notificações do aplicativo podem ser ajustadas nas preferências, no cenário fictício apresentado aqui. A disponibilidade de opções depende do produto real."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra a área de preferências.",
+            "Encontre a opção de notificações.",
+            "Revise quais tipos de aviso deseja receber.",
+            "Confira também as permissões nas configurações do dispositivo."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "preferencias-iniciais",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Defina suas preferências iniciais",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "As preferências ajudam a adaptar o aplicativo à sua rotina. Este exemplo descreve opções ilustrativas e não altera configurações reais."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Explore as preferências disponíveis.",
+            "Escolha as opções que fazem sentido para seu uso.",
+            "Leia a descrição antes de alterar uma preferência.",
+            "Confira a confirmação apresentada pelo aplicativo."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "usar-no-celular",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Como usar o aplicativo no celular",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "A Central de Ajuda do aplicativo se adapta ao tamanho da tela. Você pode consultar os tópicos no celular sem precisar ampliar a página."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra a central pelo navegador do celular.",
+            "Use a busca ou toque em uma categoria.",
+            "Role a página para ler o conteúdo.",
+            "Use Voltar à listagem para retomar sua navegação."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "usar-no-computador",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Como consultar a central no computador",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "No computador, o aplicativo organiza categorias e tópicos em uma área de leitura mais ampla. Os mesmos conteúdos estão disponíveis em telas menores."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra a central no navegador.",
+            "Escolha uma categoria ou faça uma pesquisa.",
+            "Use o teclado ou o mouse para navegar.",
+            "Pressione Tab para percorrer os controles e Enter para ativá-los."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "entender-categorias",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Entenda as categorias de ajuda",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "As categorias agrupam os tópicos do aplicativo por assunto. Elas servem como ponto de partida quando você ainda não sabe qual termo pesquisar."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Leia o nome e a descrição de cada categoria.",
+            "Abra o assunto mais próximo da sua dúvida.",
+            "Confira os títulos dos tópicos relacionados.",
+            "Use a busca global se precisar procurar em outras categorias."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "consultar-tutoriais",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Como consultar os tutoriais passo a passo",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Os tutoriais apresentam instruções em sequência para facilitar o uso do aplicativo. Imagens e vídeos podem complementar o texto quando estiverem disponíveis."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Leia a introdução do tópico.",
+            "Siga os passos na ordem apresentada.",
+            "Consulte as imagens ou os vídeos de apoio.",
+            "Verifique a data de atualização indicada no início do conteúdo."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "pedir-orientacao",
+      "categoriaId": "primeiros-passos",
+      "titulo": "Quando solicitar uma orientação ao suporte",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Se os tópicos do aplicativo não responderem à sua dúvida, você pode acessar o formulário dentro de um tópico ou depois de uma busca sem resultados."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra o formulário em Falar com o suporte.",
+            "Informe nome, e-mail, categoria, assunto e descrição.",
+            "Revise os dados antes de enviar.",
+            "Aguarde a confirmação do serviço. Se o envio falhar, os campos serão mantidos."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "atualizar-preferencias",
+      "categoriaId": "perfil-preferencias",
+      "titulo": "Como revisar suas preferências",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Este exemplo fictício mostra como revisar as preferências do aplicativo, sem modificar dados reais."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra a área de preferências.",
+            "Confira as opções disponíveis.",
+            "Ajuste o que for necessário.",
+            "Verifique a confirmação antes de sair."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "alterar-idioma",
+      "categoriaId": "perfil-preferencias",
+      "titulo": "Onde consultar as opções de idioma",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Em um aplicativo com vários idiomas, as opções de idioma podem estar nas preferências. Este tutorial apresenta um fluxo de demonstração."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra as preferências.",
+            "Localize a opção de idioma.",
+            "Consulte os idiomas oferecidos.",
+            "Escolha uma opção e confira os textos da interface."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "acessibilidade",
+      "categoriaId": "perfil-preferencias",
+      "titulo": "Opções para uma leitura mais confortável",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Você pode utilizar os recursos de acessibilidade do navegador ou do dispositivo para ler o conteúdo do aplicativo."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Ajuste o tamanho do texto nas preferências do navegador.",
+            "Use o teclado para percorrer os controles.",
+            "Ative o leitor de tela do dispositivo, se necessário.",
+            "A central respeita a preferência por menos movimento."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "consultar-pagamentos",
+      "categoriaId": "pagamentos",
+      "titulo": "Onde consultar informações de pagamentos",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Neste cenário fictício, o aplicativo apresenta informações de pagamentos em uma área específica. Esta central não realiza nem processa transações."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Localize a área de pagamentos no aplicativo de demonstração.",
+            "Confira a identificação do item.",
+            "Leia as informações disponíveis.",
+            "Procure uma orientação quando houver dúvida sobre um valor."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "comprovante",
+      "categoriaId": "pagamentos",
+      "titulo": "Como localizar um comprovante",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "O comprovante é uma referência para conferir uma operação. Este exemplo é ilustrativo; a central não armazena comprovantes nem dados de pagamento do aplicativo."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Localize a operação desejada no aplicativo.",
+            "Confira a data e a descrição.",
+            "Procure a opção de comprovante, quando disponível.",
+            "Evite compartilhar dados completos de pagamento ao pedir ajuda."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "cobranca-nao-reconhecida",
+      "categoriaId": "pagamentos",
+      "titulo": "O que fazer ao não reconhecer uma cobrança",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Se uma informação de cobrança do aplicativo não parecer correta, confira os detalhes antes de solicitar uma orientação. Este tópico é fictício e não representa uma operação real."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Confira a descrição e a data da informação.",
+            "Verifique se ela corresponde a algo que você realizou.",
+            "Descreva sua dúvida sem incluir dados completos do cartão.",
+            "Utilize o formulário disponível ao final deste tópico."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "pagamento-nao-atualizado",
+      "categoriaId": "pagamentos",
+      "titulo": "O pagamento ainda não apareceu",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Neste exemplo fictício, uma atualização de pagamento pode não aparecer imediatamente no aplicativo. A central não consulta sistemas de pagamento."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Confira a conexão do dispositivo.",
+            "Atualize a tela do aplicativo.",
+            "Revise a data e a identificação da operação.",
+            "Se precisar de ajuda, descreva o ocorrido no formulário deste tópico."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "proteger-informacoes",
+      "categoriaId": "privacidade",
+      "titulo": "Como proteger suas informações",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Ao usar o aplicativo e solicitar orientações, compartilhe apenas o necessário para explicar sua dúvida. Este é um conteúdo demonstrativo."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Não informe senhas no formulário de suporte.",
+            "Não inclua números completos de cartão.",
+            "Confira o endereço da página antes de compartilhar informações.",
+            "Evite incluir dados pessoais de outras pessoas na descrição."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "dados-formulario",
+      "categoriaId": "privacidade",
+      "titulo": "Quais dados são enviados pelo formulário",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "O formulário do aplicativo encaminha nome, e-mail, categoria, assunto e descrição ao serviço de e-mail configurado. A central não oferece histórico de solicitações."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Preencha apenas os campos necessários.",
+            "Revise a descrição antes do envio.",
+            "Aguarde a mensagem de confirmação do serviço.",
+            "A resposta será enviada ao e-mail informado quando a integração estiver ativa."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "estado-temporario",
+      "categoriaId": "privacidade",
+      "titulo": "O que acontece ao recarregar a central",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "A pesquisa, a navegação, a paginação e os campos ainda não enviados ficam somente na memória enquanto a Central de Ajuda do aplicativo está aberta."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Durante a navegação, você pode voltar à listagem anterior.",
+            "Ao recarregar, a pesquisa e o formulário são descartados.",
+            "O arquivo de categorias e tópicos é lido novamente.",
+            "E-mails já confirmados pelo serviço não são cancelados ao recarregar a página."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "atalhos",
+      "categoriaId": "recursos",
+      "titulo": "Como encontrar atalhos úteis",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Os atalhos representam caminhos para os recursos do aplicativo neste cenário fictício. Use a descrição de cada opção para entender sua função."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Explore as áreas da tela inicial.",
+            "Leia a identificação de cada recurso.",
+            "Selecione o atalho desejado.",
+            "Retorne à tela inicial quando quiser escolher outro caminho."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "imagens-tutoriais",
+      "categoriaId": "recursos",
+      "titulo": "Como visualizar as imagens dos tutoriais",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Alguns tópicos do aplicativo incluem imagens para complementar as orientações. As imagens de demonstração são ilustrativas."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra o tópico desejado.",
+            "Role a página até a imagem.",
+            "Leia a legenda quando ela estiver disponível.",
+            "Se a imagem falhar, continue consultando o texto e tente abrir o tópico novamente."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "videos-tutoriais",
+      "categoriaId": "recursos",
+      "titulo": "Como assistir aos vídeos dos tutoriais",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Quando houver um vídeo cadastrado, o tópico do aplicativo exibirá um reprodutor ou um link para visualização. Este conjunto de demonstração não inclui vídeos."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Abra um tópico que tenha vídeo disponível.",
+            "Ative a reprodução no reprodutor.",
+            "Use os controles de pausa, volume e tela cheia.",
+            "Se o vídeo não carregar, continue lendo o conteúdo textual."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "pagina-nao-carrega",
+      "categoriaId": "solucoes",
+      "titulo": "A página não carrega. O que fazer?",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Uma falha de conexão pode impedir o carregamento do conteúdo do aplicativo. Siga as orientações abaixo para tentar novamente."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Confira se o dispositivo está conectado à internet.",
+            "Aguarde a conclusão do carregamento.",
+            "Use Tentar novamente quando a opção estiver disponível.",
+            "Antes de recarregar, lembre que o formulário ainda não enviado será descartado."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "busca-sem-resultados",
+      "categoriaId": "solucoes",
+      "titulo": "Minha busca não encontrou resultados",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "A busca procura a sequência completa que você digitou no título ou no conteúdo dos tópicos do aplicativo. Uma frase muito específica pode não ter correspondências."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Revise o texto digitado.",
+            "Experimente uma frase mais curta.",
+            "Use uma palavra relacionada ao assunto.",
+            "Se continuar sem resultados, utilize Falar com o suporte."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    },
+    {
+      "id": "envio-nao-concluido",
+      "categoriaId": "solucoes",
+      "titulo": "Não consegui enviar minha solicitação",
+      "conteudo": [
+        {
+          "tipo": "paragrafo",
+          "texto": "Se o envio de uma dúvida do aplicativo não for concluído, o formulário mantém os valores para uma nova tentativa. Sem configuração de e-mail, o serviço permanece indisponível."
+        },
+        {
+          "tipo": "titulo",
+          "texto": "Passo a passo"
+        },
+        {
+          "tipo": "passos",
+          "itens": [
+            "Confira os avisos apresentados junto aos campos.",
+            "Verifique se seu e-mail foi digitado corretamente.",
+            "Tente enviar novamente após corrigir os dados.",
+            "Aguarde a mensagem Solicitação enviada com sucesso. antes de considerar o envio concluído."
+          ]
+        }
+      ],
+      "imagens": [],
+      "videos": [],
+      "atualizadoEm": "2026-11-16"
+    }
+  ]
+}

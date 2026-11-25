@@ -1,0 +1,23 @@
+{
+  "name": "central-de-ajuda",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "WATCHPACK_POLLING=1000 next dev --webpack --hostname 127.0.0.1",
+    "build": "next build --webpack",
+    "start": "next start --hostname 127.0.0.1",
+    "test": "node --test tests/*.test.mjs",
+    "db:config": "node scripts/conferir-configuracao.mjs",
+    "db:sql": "node scripts/gerar-sql.mjs",
+    "db:importar": "node scripts/importar-conteudo.mjs",
+    "db:verificar": "node scripts/verificar-persistencia.mjs",
+    "chat:verificar": "node scripts/verificar-chat.mjs"
+  },
+  "dependencies": {
+    "@google/genai": "3.6.1",
+    "next": "16.4.6",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}
