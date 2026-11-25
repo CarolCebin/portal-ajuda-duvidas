@@ -21,6 +21,8 @@ test('Gemini recebe a ficha completa, a mensagem, o contexto, as tentativas e os
     assert.equal(input.tentativasRealizadas, 1);
     assert.equal(input.topicosRelevantes[0].link, '/topicos/buscar-orientacao');
     assert.equal(input.topicosRelevantes[0].conteudo, topic.conteudo);
+    assert.deepEqual(request.config.responseJsonSchema.properties.fontes.items.enum, [topic.id]);
+    assert.match(request.config.systemInstruction, /Nunca escreva URLs/);
     return JSON.stringify(orientation);
   } });
   assert.deepEqual(decision, { tipo: 'orientar', texto: orientation.texto + '\n\n' + orientation.perguntaResolucao, fontes: [topic.id] });
@@ -165,4 +167,44 @@ test('origem externa, mensagens grandes e sessões antigas são recusadas antes 
   assert.equal((await handle(post({}, { origin: 'https://estranho.example' }))).status, 403);
   assert.equal((await handle(post({ texto: 'a'.repeat(13000) }))).status, 400);
   assert.equal((await handle(post())).status, 410);
+});
+
+test('sem tópicos consultados, o Gemini recebe somente as ações que pode cumprir', async () => {
+  const decision = await decideChat({ ...base, topics: [], generate: async request => {
+    const { tipo, fontes } = request.config.responseJsonSchema.properties;
+    assert.ok(!tipo.enum.includes('orientar'));
+    assert.equal(fontes.maxItems, 0);
+    return JSON.stringify({ tipo: 'esclarecer', texto: 'O que você está procurando?', fontes: [], perguntaResolucao: '' });
+  } });
+  assert.equal(decision.tipo, 'esclarecer');
+});
+
+test('o chat repete uma decisão inválida uma vez e só grava a resposta válida', async () => {
+  const cases = [
+    { failure: 'DECISAO_INVALIDA', recover: true, attempts: 2, status: 200, writes: 1 },
+    { failure: 'DECISAO_INVALIDA', recover: false, attempts: 2, status: 503, writes: 0 },
+    { failure: 'GEMINI_COTA', recover: false, attempts: 1, status: 503, writes: 0 },
+  ];
+  for (const example of cases) {
+    let attempts = 0;
+    let writes = 0;
+    const handle = makeChatHandler({
+      configured: () => true,
+      content: async () => ({ topicos: [topic] }),
+      readInstructions: async () => 'Ficha de teste',
+      operation: async args => {
+        if (args.p_acao === 'consultar') return { sessao: session, mensagens: history };
+        writes++;
+        return { sessao: session, mensagens: [] };
+      },
+      decide: async () => {
+        attempts++;
+        if (attempts === 1 || !example.recover) throw new Error(example.failure);
+        return { tipo: orientation.tipo, texto: orientation.texto, fontes: orientation.fontes };
+      },
+    });
+    assert.equal((await handle(post())).status, example.status);
+    assert.equal(attempts, example.attempts);
+    assert.equal(writes, example.writes);
+  }
 });
