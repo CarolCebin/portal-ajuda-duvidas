@@ -1,6 +1,6 @@
 # Central de Ajuda
 
-Aplicação Next.js única. O banco atual contém oito categorias e 52 tópicos fictícios; o arquivo de importação inicial contém seis categorias e 28 tópicos. O aviso de demonstração aparece nas telas. Categorias e tópicos são persistidos no Supabase e acessados exclusivamente pelo servidor Next.js. O assistente usa Gemini e mantém sessões temporárias no Supabase, sem login.
+Aplicação Next.js única. O banco atual contém oito categorias e 52 tópicos fictícios; o arquivo de importação inicial contém seis categorias e 28 tópicos. O aviso de demonstração aparece nas telas. Categorias e tópicos são persistidos no Supabase e acessados exclusivamente pelo servidor Next.js. O assistente usa Gemini e mantém sessões públicas e temporárias no Supabase.
 
 ## Abrir no computador
 
@@ -149,3 +149,16 @@ A aplicação usa um cookie anônimo HttpOnly e guarda apenas seu hash no banco.
 `database/chat.sql` registra a instalação original. `database/chat-gemini.sql` registra a migração aplicada no Supabase como `chat_decisoes_gemini`. Ambos são scripts de instalação, não de reexecução.
 
 Use `npm test` e `npm run build` para verificar o código sem chamar o Gemini. Com chave e ficha prontas e o app aberto, `npm run chat:verificar` envia três mensagens fictícias (clara, fora do assunto e ambígua), compara os registros retornados com o Supabase e remove as sessões que criou. Se o app estiver em outra porta, passe o endereço local como argumento.
+
+## Administração e avaliação da IA
+
+Abra `/admin` e escolha **Solicitar link de acesso**. Abra o e-mail no mesmo navegador em que pediu o link. Depois de entrar, a página inicial mostra **Administração** no cabeçalho. A entrada é exclusiva da conta administrativa vinculada pelo banco.
+
+Para preparar outro ambiente, crie a conta administradora no Supabase Auth, aplique `database/avaliacao-ia.sql` uma vez e vincule a conta no SQL Editor com a consulta abaixo. Em **Authentication → URL Configuration**, permita o endereço exato do retorno `/admin/confirmar` de cada ambiente. No computador, use `http://localhost:3000/admin` se o Site URL já for `http://localhost:3000`. Para usar o endereço `127.0.0.1`, permita também `http://127.0.0.1:3000/admin/confirmar`. O envio por e-mail deve estar habilitado para a conta. A confirmação do endereço é feita pela dona da conta ao abrir o link.
+
+```sql
+insert into public.avaliacao_admin (usuario_id)
+select id from auth.users where lower(email) = lower('EMAIL_DA_ADMINISTRADORA');
+```
+
+Na avaliação, acrescente casos, anote o que mudou e clique em **Rodar avaliação**. O painel conduz os casos um por vez e salva cada resultado. Se a página for fechada durante a rodada, reabra a área para continuar. O placar inclui os casos respondidos que você já marcou. Uma sugestão de marcação só entra no placar depois que você escolher e salvar a marcação.
