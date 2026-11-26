@@ -154,11 +154,15 @@ Use `npm test` e `npm run build` para verificar o código sem chamar o Gemini. C
 
 Abra `/admin` e escolha **Solicitar link de acesso**. Abra o e-mail no mesmo navegador em que pediu o link. Depois de entrar, a página inicial mostra **Administração** no cabeçalho. A entrada é exclusiva da conta administrativa vinculada pelo banco.
 
-Para preparar outro ambiente, crie a conta administradora no Supabase Auth, aplique `database/avaliacao-ia.sql` uma vez e vincule a conta no SQL Editor com a consulta abaixo. Em **Authentication → URL Configuration**, permita o endereço exato do retorno `/admin/confirmar` de cada ambiente. No computador, use `http://localhost:3000/admin` se o Site URL já for `http://localhost:3000`. Para usar o endereço `127.0.0.1`, permita também `http://127.0.0.1:3000/admin/confirmar`. O envio por e-mail deve estar habilitado para a conta. A confirmação do endereço é feita pela dona da conta ao abrir o link.
+Para preparar outro ambiente, crie a conta administradora no Supabase Auth, aplique `database/avaliacao-ia.sql` e, em seguida, `database/avaliacao-edicoes.sql` e `database/chat-instrucoes.sql`, uma vez cada. Vincule a conta no SQL Editor com a consulta abaixo. Em **Authentication → URL Configuration**, permita o endereço exato do retorno `/admin/confirmar` de cada ambiente. No computador, use `http://localhost:3000/admin` se o Site URL já for `http://localhost:3000`. Para usar o endereço `127.0.0.1`, permita também `http://127.0.0.1:3000/admin/confirmar`. O envio por e-mail deve estar habilitado para a conta. A confirmação do endereço é feita pela dona da conta ao abrir o link.
 
 ```sql
 insert into public.avaliacao_admin (usuario_id)
 select id from auth.users where lower(email) = lower('EMAIL_DA_ADMINISTRADORA');
 ```
 
-Na avaliação, acrescente casos, anote o que mudou e clique em **Rodar avaliação**. O painel conduz os casos um por vez e salva cada resultado. Se a página for fechada durante a rodada, reabra a área para continuar. O placar inclui os casos respondidos que você já marcou. Uma sugestão de marcação só entra no placar depois que você escolher e salvar a marcação.
+Em **Casos**, adicione ou edite entradas. Cada edição exige um motivo e guarda a data, a conta responsável e os valores antes e depois. Uma rodada usa as versões existentes no início e o histórico mostra quais versões foram utilizadas.
+
+Clique em **Rodar avaliação**, anote o que mudou e inicie a rodada. Use **Resultados** para filtrar os casos e **Histórico** para reabrir uma rodada anterior. O painel conduz os casos um por vez e salva cada resultado. Se a página for fechada durante a rodada, reabra a área para continuar. O placar inclui os casos respondidos que você já marcou. Uma sugestão de marcação só entra no placar depois que você escolher e salvar a marcação.
+
+A aba **Alertas** mostra detecções de possíveis instruções nas mensagens do chat, com tipo, datas e identificador. O alerta fica disponível após a expiração da conversa e guarda apenas esses dados. A avaliação exibe a detecção no próprio resultado. A migração `database/chat-instrucoes.sql` percorre as mensagens existentes por busca de texto e informa o número de registros marcados.

@@ -2,7 +2,7 @@ import { CHAT_MESSAGE_LIMIT } from '../../../../lib/chat.mjs';
 import { EVALUATION_REASON_LIMIT, EVALUATION_TEXT_LIMIT } from '../../../../lib/avaliacao.mjs';
 import { adminResponse, mutationOrigin, readAdmin } from '../../../../lib/server/admin-auth.mjs';
 import {
-  addEvaluationCase, evaluateCase, evaluationCommand, evaluationOverview, evaluationRun,
+  activeEvaluationRun, addEvaluationCase, editEvaluationCase, evaluateCase, evaluationCaseEdits, evaluationCommand, evaluationInstructionAlerts, evaluationOverview, evaluationRun,
 } from '../../../../lib/server/evaluation.mjs';
 
 export const maxDuration = 120;
@@ -22,7 +22,15 @@ export async function GET(request) {
   try {
     const admin = await readAdmin(request.cookies);
     if (!admin) return denied();
-    const id = request.nextUrl.searchParams.get('rodada');
+    const query = request.nextUrl.searchParams;
+    const caso = query.get('caso');
+    if (caso !== null) {
+      if (!UUID.test(caso)) return adminResponse({ erro: 'Caso inválido.' }, 400);
+      return adminResponse({ edicoes: await evaluationCaseEdits(admin, caso) });
+    }
+    if (query.has('alertas')) return adminResponse({ alertas: await evaluationInstructionAlerts(admin) });
+    if (query.has('ativa')) return adminResponse({ rodada: await activeEvaluationRun(admin) });
+    const id = query.get('rodada');
     if (id === null) return adminResponse(await evaluationOverview(admin));
     if (!UUID.test(id)) return adminResponse({ erro: 'Rodada inválida.' }, 400);
     const rodada = await evaluationRun(admin, id);
@@ -41,12 +49,31 @@ export async function POST(request) {
     try { body = await request.json(); } catch {}
     if (!body || typeof body !== 'object') return adminResponse({ erro: 'Dados inválidos.' }, 400);
 
-    if (body.acao === 'adicionar') {
+    if (body.acao === 'adicionar' || body.acao === 'editar') {
       const entrada = field(body.entrada, CHAT_MESSAGE_LIMIT);
       const esperado = field(body.esperado, EVALUATION_TEXT_LIMIT);
       const motivo = field(body.motivo, EVALUATION_REASON_LIMIT, { oneLine: true });
       if (!entrada || !esperado || !motivo) return adminResponse({ erro: 'Preencha os três campos do caso.' }, 400);
-      return adminResponse({ caso: await addEvaluationCase(admin, { entrada, esperado, motivo }) }, 201);
+      if (body.acao === 'adicionar') {
+        return adminResponse({ caso: await addEvaluationCase(admin, { entrada, esperado, motivo }) }, 201);
+      }
+      if (typeof body.caso !== 'string' || !UUID.test(body.caso)
+        || !Number.isInteger(body.versao) || body.versao < 1 || body.versao > 2147483647) {
+        return adminResponse({ erro: 'Caso ou versão inválida.' }, 400);
+      }
+      const motivoEdicao = field(body.motivoEdicao, EVALUATION_REASON_LIMIT);
+      if (!motivoEdicao) return adminResponse({ erro: 'Informe por que é necessário editar este caso.' }, 400);
+      const result = await editEvaluationCase(admin, {
+        p_caso: body.caso, p_versao: body.versao,
+        p_entrada: entrada, p_esperado: esperado, p_motivo: motivo, p_motivo_edicao: motivoEdicao,
+      });
+      if (result.estado === 'editado') return adminResponse({ caso: result.caso });
+      if (result.estado === 'nao_encontrado') return adminResponse({ erro: 'Caso não encontrado.' }, 404);
+      if (result.estado === 'sem_mudanca') return adminResponse({ erro: 'Altere pelo menos um campo antes de salvar.' }, 422);
+      if (result.estado === 'desatualizado') {
+        return adminResponse({ erro: 'Este caso já foi alterado. Atualize a página e abra a edição de novo.' }, 409);
+      }
+      return unavailable();
     }
 
     if (typeof body.rodada !== 'string' || !UUID.test(body.rodada)) {
@@ -56,7 +83,11 @@ export async function POST(request) {
       const mudancas = field(body.mudancas, EVALUATION_TEXT_LIMIT, { required: false });
       if (mudancas === null) return adminResponse({ erro: 'Revise o texto sobre o que mudou.' }, 400);
       const id = await evaluationCommand(admin, 'iniciar', { p_id: body.rodada, p_mudancas: mudancas });
-      return id ? adminResponse({ id }, 201) : adminResponse({ erro: 'Adicione um caso para começar.' }, 409);
+      if (!id) return adminResponse({ erro: 'Adicione um caso para começar.' }, 409);
+      if (id !== body.rodada) {
+        return adminResponse({ erro: 'Aguarde a rodada em andamento terminar.', rodadaAtiva: id }, 409);
+      }
+      return adminResponse({ id }, 201);
     }
     if (body.acao === 'executar') {
       const caso = await evaluationCommand(admin, 'proximo', { p_rodada: body.rodada });

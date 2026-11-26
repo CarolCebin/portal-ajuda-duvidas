@@ -1,147 +1,107 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { CHAT_MESSAGE_LIMIT } from '../lib/chat.mjs';
-import { EVALUATION_REASON_LIMIT, EVALUATION_TEXT_LIMIT, suggestedMark } from '../lib/avaliacao.mjs';
+import { EVALUATION_TEXT_LIMIT, evaluationRequest, formatEvaluationDate } from '../lib/avaliacao.mjs';
+import EvaluationCases from './EvaluationCases';
+import EvaluationAlerts from './EvaluationAlerts';
+import EvaluationResults from './EvaluationResults';
 
-const dateFormat = new Intl.DateTimeFormat('pt-BR', {
-  dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo',
-});
-const resultLabels = {
-  pendente: 'Aguardando resposta',
-  executando: 'Chamando o modelo…',
-  erro_chamada: 'Erro na chamada',
-  erro_execucao: 'Erro na execução',
-};
+const sections = [['resultados', 'Resultados'], ['casos', 'Casos'], ['historico', 'Histórico'], ['alertas', 'Alertas']];
+const defaultLocation = { view: 'resultados', round: null, order: null };
 
-async function evaluationRequest({ query = '', body } = {}) {
-  const response = await fetch('/api/admin/avaliacao' + query, {
-    ...(body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {}),
-    cache: 'no-store',
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(response.status === 403 ? 'Seu acesso expirou. Recarregue a página para entrar novamente.' : data.erro);
-  }
-  return data;
+function locationFromUrl() {
+  const query = new URLSearchParams(window.location.search);
+  const view = query.get('aba');
+  const round = query.get('rodada');
+  const order = Number(query.get('caso'));
+  return {
+    view: sections.some(([id]) => view === id) ? view : defaultLocation.view,
+    round: round || null,
+    order: Number.isSafeInteger(order) && order > 0 ? order : null,
+  };
 }
 
-function CaseForm({ onAdd }) {
-  const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState('');
-
-  async function submit(event) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    setPending(true);
-    setMessage('');
-    try {
-      const { caso } = await evaluationRequest({ body: { acao: 'adicionar', ...Object.fromEntries(new FormData(form)) } });
-      onAdd(caso);
-      form.reset();
-      setMessage('Caso adicionado.');
-    } catch (error) {
-      setMessage(error.message);
-    } finally {
-      setPending(false);
-    }
-  }
-
-  return <form className="evaluation-case-form" onSubmit={submit}>
-    <div className="field">
-      <label htmlFor="caso-entrada">Entrada</label>
-      <textarea id="caso-entrada" name="entrada" rows={3} maxLength={CHAT_MESSAGE_LIMIT} required />
-    </div>
-    <div className="field">
-      <label htmlFor="caso-esperado">Decisão esperada</label>
-      <textarea id="caso-esperado" name="esperado" rows={3} maxLength={EVALUATION_TEXT_LIMIT} required />
-    </div>
-    <div className="field evaluation-case-reason">
-      <label htmlFor="caso-motivo">Por que este caso está na lista</label>
-      <input id="caso-motivo" name="motivo" maxLength={EVALUATION_REASON_LIMIT} required />
-    </div>
-    <div className="evaluation-actions">
-      <button className="button button-primary" disabled={pending}>{pending ? 'Adicionando…' : 'Adicionar caso'}</button>
-      {message && <span role="status">{message}</span>}
-    </div>
-  </form>;
+function roundSummary({ resultados, ...summary }) {
+  return summary;
 }
 
-function CaseResult({ result, roundId, onSave }) {
-  const [passed, setPassed] = useState(result.passou);
-  const [reason, setReason] = useState(result.motivo_marcacao);
-  const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState('');
-  const answered = result.estado === 'respondido';
-  const suggestion = suggestedMark(result.esperado, result.decisao);
-  const reasonId = 'marcacao-' + roundId + '-' + result.ordem;
+function storeRound(overview, round) {
+  if (!overview) return overview;
+  const index = overview.rodadas.findIndex(item => item.id === round.id);
+  if (index < 0) return { ...overview, rodadas: [round, ...overview.rodadas] };
+  return { ...overview, rodadas: overview.rodadas.map(item => item.id === round.id ? round : item) };
+}
 
-  async function save(event) {
-    event.preventDefault();
-    setPending(true);
-    setMessage('');
-    try {
-      await evaluationRequest({ body: { acao: 'marcar', rodada: roundId, ordem: result.ordem, passou: passed, motivo: reason } });
-      await onSave(roundId);
-      setMessage('Marcação salva.');
-    } catch (error) {
-      setMessage(error.message);
-    } finally {
-      setPending(false);
-    }
-  }
-
-  return <form className="evaluation-result" aria-label={'Caso ' + result.ordem} onSubmit={save}>
-    <div><h3>Entrada</h3><p className="evaluation-text">{result.entrada}</p><p className="evaluation-muted">{result.motivo_caso}</p></div>
-    <div><h3>Esperado</h3><p className="evaluation-text">{result.esperado}</p></div>
-    <div><h3>Resposta</h3>{answered ? <>
-      <strong className="evaluation-decision">{result.decisao}</strong>
-      <p className="evaluation-text">{result.resposta}</p>
-    </> : <p className={result.estado.startsWith('erro') ? 'evaluation-error' : 'evaluation-muted'}>{resultLabels[result.estado]}</p>}</div>
-    <div><h3>Tópicos consultados</h3>{result.consultados.length ? <ul>
-      {result.consultados.map(topic => <li key={topic.id}><a href={topic.link} target="_blank" rel="noreferrer">{topic.titulo}</a></li>)}
-    </ul> : <p className="evaluation-muted">{answered || result.estado.startsWith('erro') ? 'Nenhum tópico' : 'Aguardando'}</p>}</div>
-    <fieldset className="evaluation-mark" disabled={!answered || pending}>
-      <legend>Marcação</legend>
-      {answered ? <>
-        <label><input type="radio" name="passou" checked={passed === true} onChange={() => setPassed(true)} /> Passou</label>
-        <label><input type="radio" name="passou" checked={passed === false} onChange={() => setPassed(false)} /> Não passou</label>
-        {result.passou === null && suggestion !== null && <p className="evaluation-muted">Sugestão de marcação <strong>{suggestion ? 'Passou' : 'Não passou'}</strong></p>}
-      </> : <p className="evaluation-muted">Indisponível</p>}
-    </fieldset>
-    <div className="field evaluation-mark-reason">
-      <label htmlFor={reasonId}>Motivo da marcação</label>
-      <input id={reasonId} value={reason} onChange={event => setReason(event.target.value)} disabled={!answered || pending} maxLength={EVALUATION_REASON_LIMIT} />
-      {answered && <button className="button button-admin" disabled={pending || passed === null}>{pending ? 'Salvando…' : 'Salvar marcação'}</button>}
-      {message && <p role="status">{message}</p>}
-    </div>
-  </form>;
+function History({ rounds, link }) {
+  return <section className="admin-panel evaluation-history" aria-labelledby="evaluation-history">
+    <h2 id="evaluation-history">Histórico de rodadas</h2>
+    {rounds.length ? <ol>
+      {rounds.map(round => <li key={round.id}>
+        <div className="evaluation-history-main">
+          <time dateTime={round.criada_em}>{formatEvaluationDate(round.criada_em)}</time>
+          <span className="evaluation-muted">{round.concluida_em ? 'Concluída' : 'Em andamento'} · {round.total} {round.total === 1 ? 'caso' : 'casos'}</span>
+        </div>
+        <p className="evaluation-text">{round.mudancas || 'Sem anotação'}</p>
+        <div className="evaluation-history-action">
+          <strong>{round.passaram} de {round.avaliados} passaram</strong>
+          <a className="button button-admin" {...link({ view: 'resultados', round: round.id })}
+            aria-label={'Ver resultados da rodada de ' + formatEvaluationDate(round.criada_em)}>Ver resultados</a>
+        </div>
+      </li>)}
+    </ol> : <p className="evaluation-empty">Nenhuma rodada registrada.</p>}
+  </section>;
 }
 
 export default function EvaluationPanel() {
   const [overview, setOverview] = useState(null);
-  const [selected, setSelected] = useState(null);
-  const [detail, setDetail] = useState(null);
+  const [navigation, setNavigation] = useState(defaultLocation);
+  const [details, setDetails] = useState({});
   const [changes, setChanges] = useState('');
+  const [showStart, setShowStart] = useState(false);
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState('');
+  const [detailError, setDetailError] = useState(null);
   const [workerError, setWorkerError] = useState('');
-  const [detailError, setDetailError] = useState('');
   const [overviewRetry, setOverviewRetry] = useState(0);
   const [detailRetry, setDetailRetry] = useState(0);
   const [workerRetry, setWorkerRetry] = useState(0);
-  const selectedRef = useRef(null);
   const runRequests = useRef(new Map());
   const newRunId = useRef(null);
-  const activeId = overview?.rodadas.find(round => !round.concluida_em)?.id;
   const latest = overview?.rodadas[0];
+  const activeRound = overview?.rodadas.find(round => !round.concluida_em);
+  const activeId = activeRound?.id;
+  const selectedId = navigation.view === 'resultados' ? navigation.round || latest?.id : null;
+  const detail = details[selectedId];
+  const loaded = Boolean(overview);
 
-  const chooseRound = useCallback(id => {
-    if (id === selectedRef.current) return;
-    selectedRef.current = id;
-    setSelected(id);
-    setDetail(null);
-    setDetailError('');
+  useEffect(() => {
+    const readUrl = () => setNavigation(locationFromUrl());
+    readUrl();
+    window.addEventListener('popstate', readUrl);
+    return () => window.removeEventListener('popstate', readUrl);
+  }, []);
+
+  const link = useCallback(({ view, round = null, order = null }) => {
+    const query = new URLSearchParams();
+    if (view !== 'resultados') query.set('aba', view);
+    if (round) query.set('rodada', round);
+    if (order) query.set('caso', order);
+    const href = '/admin' + (query.size ? '?' + query : '');
+    return {
+      href,
+      onClick(event) {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        event.preventDefault();
+        const here = window.location.pathname + window.location.search;
+        if (href !== here) window.history.pushState(null, '', href);
+        setNavigation({ view, round, order });
+      },
+    };
+  }, []);
+
+  const openRound = useCallback(id => {
+    window.history.pushState(null, '', '/admin?rodada=' + encodeURIComponent(id));
+    setNavigation({ view: 'resultados', round: id, order: null });
   }, []);
 
   const refreshRun = useCallback(async id => {
@@ -149,100 +109,150 @@ export default function EvaluationPanel() {
     runRequests.current.set(id, ticket);
     const { rodada } = await evaluationRequest({ query: '?rodada=' + encodeURIComponent(id) });
     if (ticket === runRequests.current.get(id)) {
-      setOverview(current => current && ({
-        ...current,
-        rodadas: current.rodadas.map(item => item.id === id ? roundSummary(rodada) : item),
-      }));
-      if (id === selectedRef.current) {
-        setDetail(rodada);
-        setDetailError('');
-      }
+      setOverview(current => storeRound(current, roundSummary(rodada)));
+      setDetails(current => ({ ...current, [id]: rodada }));
+      setDetailError(current => current?.id === id ? null : current);
     }
     return rodada;
   }, []);
 
   useEffect(() => {
-    let active = true;
+    let current = true;
     evaluationRequest().then(data => {
-      if (!active) return;
-      setOverview(data);
-      chooseRound(data.rodadas[0]?.id || null);
-    }).catch(cause => { if (active) setError(cause.message); });
-    return () => { active = false; };
-  }, [chooseRound, overviewRetry]);
+      if (current) setOverview(data);
+    }).catch(cause => { if (current) setError(cause.message); });
+    return () => { current = false; };
+  }, [overviewRetry]);
 
   useEffect(() => {
-    let active = true;
-    if (selected) refreshRun(selected).catch(cause => { if (active) setDetailError(cause.message); });
-    return () => { active = false; };
-  }, [selected, refreshRun, detailRetry]);
+    if (!selectedId) return;
+    let current = true;
+    refreshRun(selectedId).catch(cause => { if (current) setDetailError({ id: selectedId, message: cause.message }); });
+    return () => { current = false; };
+  }, [selectedId, refreshRun, detailRetry]);
+
+  useEffect(() => {
+    if (!loaded || activeId) return;
+    let current = true;
+    let checking = false;
+
+    async function check() {
+      if (document.visibilityState !== 'visible' || checking) return;
+      checking = true;
+      try {
+        const { rodada } = await evaluationRequest({ query: '?ativa=1' });
+        if (current && rodada) {
+          setOverview(previous => previous.rodadas.some(item => item.id === rodada.id) ? previous : storeRound(previous, rodada));
+        }
+      } catch {
+        // A tentativa de iniciar uma rodada também verifica o bloqueio no servidor.
+      } finally {
+        checking = false;
+      }
+    }
+
+    const interval = setInterval(check, 10000);
+    window.addEventListener('focus', check);
+    return () => { current = false; clearInterval(interval); window.removeEventListener('focus', check); };
+  }, [loaded, activeId]);
 
   useEffect(() => {
     if (!activeId) return;
-    let active = true;
+    let current = true;
     let timeout;
 
     async function next() {
       try {
         const { processado } = await evaluationRequest({ body: { acao: 'executar', rodada: activeId } });
-        if (!active) return;
+        if (!current) return;
         const rodada = await refreshRun(activeId);
-        if (active && !rodada.concluida_em) timeout = setTimeout(next, processado ? 0 : 1400);
+        if (current && !rodada.concluida_em) timeout = setTimeout(next, processado ? 0 : 1400);
       } catch (cause) {
-        if (active) setWorkerError(cause.message);
+        if (current) setWorkerError(cause.message);
       }
     }
 
     next();
-    return () => { active = false; clearTimeout(timeout); };
+    return () => { current = false; clearTimeout(timeout); };
   }, [activeId, refreshRun, workerRetry]);
 
   async function startRun(event) {
     event.preventDefault();
+    if (starting || activeId) return;
     setStarting(true);
     setError('');
     setWorkerError('');
     try {
       newRunId.current ??= crypto.randomUUID();
       const { id } = await evaluationRequest({ body: { acao: 'iniciar', rodada: newRunId.current, mudancas: changes } });
-      const { rodada } = await evaluationRequest({ query: '?rodada=' + encodeURIComponent(id) });
-      setOverview(current => ({
-        ...current,
-        rodadas: [roundSummary(rodada), ...current.rodadas.filter(item => item.id !== id)],
-      }));
-      chooseRound(id);
-      setDetail(rodada);
+      await refreshRun(id);
+      setShowStart(false);
       setChanges('');
       newRunId.current = null;
+      openRound(id);
     } catch (cause) {
+      const other = cause.cause?.rodadaAtiva;
       setError(cause.message);
+      if (other) {
+        setShowStart(false);
+        openRound(other);
+        try { await refreshRun(other); } catch (loadError) { setError(loadError.message); }
+      }
     } finally {
       setStarting(false);
     }
   }
 
-  const pendingMarks = detail?.resultados.filter(result => result.estado === 'respondido' && result.passou === null).length || 0;
-  const failedCases = detail?.resultados.filter(result => result.estado.startsWith('erro')).length || 0;
+  function saveCase(caso) {
+    setOverview(current => ({
+      ...current,
+      casos: current.casos.some(item => item.id === caso.id)
+        ? current.casos.map(item => item.id === caso.id ? caso : item)
+        : [...current.casos, caso],
+    }));
+  }
+
+  const processed = details[activeId]?.resultados.filter(result => result.estado === 'respondido' || result.estado.startsWith('erro')).length || 0;
 
   return <main className="evaluation-layout">
-    <section className="evaluation-overview" aria-labelledby="evaluation-title">
+    <header className="evaluation-page-header">
       <div>
-        <h1 id="evaluation-title">Avaliação da IA</h1>
+        <h1>Avaliação da IA</h1>
         <div className="evaluation-score">
           <span>Última rodada</span>
-          {latest ? <><strong>{latest.passaram} de {latest.avaliados}</strong><span>casos passaram</span></> : <strong className="evaluation-score-empty">Nenhuma rodada</strong>}
+          {latest ? <strong>{latest.passaram} de {latest.avaliados} passaram</strong> : <strong>Nenhuma rodada</strong>}
         </div>
       </div>
-      <form className="evaluation-start" onSubmit={startRun}>
-        <div className="field">
-          <label htmlFor="evaluation-changes">O que mudou desde a última rodada?</label>
-          <textarea id="evaluation-changes" rows={3} maxLength={EVALUATION_TEXT_LIMIT} value={changes} onChange={event => setChanges(event.target.value)} />
+      <button type="button" className="button button-primary" disabled={starting || Boolean(activeId) || !overview?.casos.length}
+        aria-describedby={activeId ? 'evaluation-running-text' : undefined} aria-expanded={showStart && !activeId} onClick={() => { setError(''); setShowStart(open => !open); }}>
+        Rodar avaliação
+      </button>
+    </header>
+
+    {activeRound && <section className="evaluation-running" aria-label="Rodada em andamento">
+      <div className="evaluation-running-header">
+        <div role="status">
+          <strong>Rodada em andamento</strong>
+          <p id="evaluation-running-text">{processed} de {activeRound.total} {activeRound.total === 1 ? 'caso processado' : 'casos processados'}. Uma nova rodada poderá começar quando esta terminar.</p>
         </div>
-        <button className="button button-primary" disabled={starting || Boolean(activeId) || !overview?.casos.length}>
-          {starting ? 'Iniciando…' : activeId ? 'Rodada em andamento' : 'Rodar avaliação'}
-        </button>
-      </form>
-    </section>
+        <a className="button button-admin" {...link({ view: 'resultados', round: activeId })}>Ver andamento</a>
+      </div>
+      <progress value={processed} max={activeRound.total} aria-label="Progresso da rodada" />
+    </section>}
+    {showStart && !activeId && <form className="admin-panel evaluation-start" onSubmit={startRun}>
+      <div className="field">
+        <label htmlFor="evaluation-changes">O que mudou desde a última rodada?</label>
+        <textarea id="evaluation-changes" rows={3} maxLength={EVALUATION_TEXT_LIMIT} value={changes} onChange={event => setChanges(event.target.value)} disabled={starting} />
+      </div>
+      <div className="evaluation-actions">
+        <button type="submit" className="button button-primary" disabled={starting}>{starting ? 'Iniciando…' : 'Iniciar rodada'}</button>
+        <button type="button" className="button button-admin" disabled={starting} onClick={() => setShowStart(false)}>Cancelar</button>
+      </div>
+    </form>}
+
+    <nav className="evaluation-nav" aria-label="Avaliação da IA">
+      {sections.map(([id, label]) => <a key={id} {...link({ view: id })} aria-current={navigation.view === id ? 'page' : undefined}>{label}</a>)}
+    </nav>
 
     {error && <div className="evaluation-feedback" role="alert">{error}
       {!overview && <button className="text-button" onClick={() => { setError(''); setOverviewRetry(count => count + 1); }}>Tentar novamente</button>}
@@ -252,51 +262,22 @@ export default function EvaluationPanel() {
     </div>}
     {!overview && !error && <p role="status">Carregando avaliação…</p>}
 
-    {overview && <section className="admin-panel evaluation-cases" aria-labelledby="evaluation-cases">
-      <div className="evaluation-section-title">
-        <h2 id="evaluation-cases">Casos da rodada</h2>
-        {detail && <span>{dateFormat.format(new Date(detail.criada_em))}</span>}
-      </div>
-      {detailError && <div className="evaluation-feedback" role="alert">{detailError}
-        <button className="text-button" onClick={() => { setDetailError(''); setDetailRetry(count => count + 1); }}>Tentar novamente</button>
+    {overview && navigation.view === 'alertas' && <EvaluationAlerts />}
+    {overview && navigation.view === 'casos' && <EvaluationCases cases={overview.casos} onSave={saveCase} />}
+    {overview && navigation.view === 'historico' && <History rounds={overview.rodadas} link={link} />}
+    {overview && navigation.view === 'resultados' && <>
+      {detailError && detailError.id === selectedId && <div className="evaluation-feedback" role="alert">
+        {detailError.message}
+        <button className="text-button" onClick={() => { setDetailError(null); setDetailRetry(count => count + 1); }}>Tentar novamente</button>
       </div>}
-      {selected && !detail && !detailError && <p role="status">Carregando resultados…</p>}
-      {detail && <>
-        <p className="evaluation-muted" role="status">
-          {detail.resultados.filter(result => ['respondido', 'erro_chamada', 'erro_execucao'].includes(result.estado)).length} de {detail.total} processados
-          {' · '}{pendingMarks} aguardando marcação{' · '}{failedCases} com erro
-        </p>
-        {detail.resultados.map(result => <CaseResult key={detail.id + '-' + result.ordem} result={result} roundId={detail.id} onSave={refreshRun} />)}
-      </>}
-      {!selected && <p className="evaluation-muted">{overview.casos.length ? 'Rode uma avaliação para ver as respostas.' : 'Adicione o primeiro caso para começar.'}</p>}
-
-      <details className="evaluation-library">
-        <summary>Lista de casos ({overview.casos.length})</summary>
-        {overview.casos.length ? <ul>
-          {overview.casos.map(caso => <li key={caso.id}><strong className="evaluation-text">{caso.entrada}</strong><p className="evaluation-text">Esperado · {caso.esperado}</p><p className="evaluation-muted">{caso.motivo}</p></li>)}
-        </ul> : <p className="evaluation-muted">A lista está vazia.</p>}
-      </details>
-      <details className="evaluation-library">
-        <summary>Adicionar um caso</summary>
-        <CaseForm onAdd={caso => setOverview(current => ({ ...current, casos: [...current.casos, caso] }))} />
-      </details>
-    </section>}
-
-    {overview && <section className="admin-panel evaluation-history" aria-labelledby="evaluation-history">
-      <h2 id="evaluation-history">Histórico de rodadas</h2>
-      {!overview.rodadas.length ? <p className="evaluation-muted">Nenhuma rodada registrada.</p> : <ol>
-        {overview.rodadas.map(round => <li key={round.id}>
-          <button type="button" className="evaluation-history-item" aria-pressed={round.id === selected} onClick={() => chooseRound(round.id)}>
-            <time dateTime={round.criada_em}>{dateFormat.format(new Date(round.criada_em))}</time>
-            <strong>{round.passaram} de {round.avaliados} passaram</strong>
-            <span className="evaluation-text">{round.mudancas || 'Sem anotação'}</span>
-          </button>
-        </li>)}
-      </ol>}
-    </section>}
+      {selectedId && !detail && detailError?.id !== selectedId && <p role="status">Carregando resultados…</p>}
+      {detail && <EvaluationResults key={detail.id} round={detail} caseOrder={navigation.order} cases={overview.casos}
+        caseLink={order => link({ view: 'resultados', round: detail.id, order })} historyLink={link({ view: 'historico' })} onSave={refreshRun} />}
+      {!selectedId && <section className="admin-panel evaluation-empty">
+        <h2>Nenhuma rodada disponível</h2>
+        {overview.casos.length ? <p>Use <strong>Rodar avaliação</strong> para ver os primeiros resultados.</p>
+          : <a {...link({ view: 'casos' })}>Ir para casos cadastrados</a>}
+      </section>}
+    </>}
   </main>;
-}
-
-function roundSummary({ resultados, ...summary }) {
-  return summary;
 }
