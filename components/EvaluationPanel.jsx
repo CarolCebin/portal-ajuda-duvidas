@@ -5,8 +5,9 @@ import { EVALUATION_TEXT_LIMIT, evaluationRequest, formatEvaluationDate } from '
 import EvaluationCases from './EvaluationCases';
 import EvaluationAlerts from './EvaluationAlerts';
 import EvaluationResults from './EvaluationResults';
+import CostsPanel from './CostsPanel';
 
-const sections = [['resultados', 'Resultados'], ['casos', 'Casos'], ['historico', 'Histórico'], ['alertas', 'Alertas']];
+const sections = [['resultados', 'Resultados'], ['casos', 'Casos'], ['historico', 'Histórico'], ['alertas', 'Alertas'], ['custos', 'Custos']];
 const defaultLocation = { view: 'resultados', round: null, order: null };
 
 function locationFromUrl() {
@@ -212,21 +213,22 @@ export default function EvaluationPanel() {
     }));
   }
 
+  const showingCosts = navigation.view === 'custos';
   const processed = details[activeId]?.resultados.filter(result => result.estado === 'respondido' || result.estado.startsWith('erro')).length || 0;
 
   return <main className="evaluation-layout">
     <header className="evaluation-page-header">
       <div>
-        <h1>Avaliação da IA</h1>
-        <div className="evaluation-score">
+        <h1>{showingCosts ? 'Custos da IA' : 'Avaliação da IA'}</h1>
+        {!showingCosts && <div className="evaluation-score">
           <span>Última rodada</span>
           {latest ? <strong>{latest.passaram} de {latest.avaliados} passaram</strong> : <strong>Nenhuma rodada</strong>}
-        </div>
+        </div>}
       </div>
-      <button type="button" className="button button-primary" disabled={starting || Boolean(activeId) || !overview?.casos.length}
+      {!showingCosts && <button type="button" className="button button-primary" disabled={starting || Boolean(activeId) || !overview?.casos.length}
         aria-describedby={activeId ? 'evaluation-running-text' : undefined} aria-expanded={showStart && !activeId} onClick={() => { setError(''); setShowStart(open => !open); }}>
         Rodar avaliação
-      </button>
+      </button>}
     </header>
 
     {activeRound && <section className="evaluation-running" aria-label="Rodada em andamento">
@@ -239,7 +241,7 @@ export default function EvaluationPanel() {
       </div>
       <progress value={processed} max={activeRound.total} aria-label="Progresso da rodada" />
     </section>}
-    {showStart && !activeId && <form className="admin-panel evaluation-start" onSubmit={startRun}>
+    {!showingCosts && showStart && !activeId && <form className="admin-panel evaluation-start" onSubmit={startRun}>
       <div className="field">
         <label htmlFor="evaluation-changes">O que mudou desde a última rodada?</label>
         <textarea id="evaluation-changes" rows={3} maxLength={EVALUATION_TEXT_LIMIT} value={changes} onChange={event => setChanges(event.target.value)} disabled={starting} />
@@ -250,18 +252,19 @@ export default function EvaluationPanel() {
       </div>
     </form>}
 
-    <nav className="evaluation-nav" aria-label="Avaliação da IA">
+    <nav className="evaluation-nav" aria-label="Administração">
       {sections.map(([id, label]) => <a key={id} {...link({ view: id })} aria-current={navigation.view === id ? 'page' : undefined}>{label}</a>)}
     </nav>
 
-    {error && <div className="evaluation-feedback" role="alert">{error}
+    {!showingCosts && error && <div className="evaluation-feedback" role="alert">{error}
       {!overview && <button className="text-button" onClick={() => { setError(''); setOverviewRetry(count => count + 1); }}>Tentar novamente</button>}
     </div>}
     {workerError && <div className="evaluation-feedback" role="alert">{workerError}
       <button className="text-button" onClick={() => { setWorkerError(''); setWorkerRetry(count => count + 1); }}>Retomar rodada</button>
     </div>}
-    {!overview && !error && <p role="status">Carregando avaliação…</p>}
+    {!showingCosts && !overview && !error && <p role="status">Carregando avaliação…</p>}
 
+    {showingCosts && <CostsPanel />}
     {overview && navigation.view === 'alertas' && <EvaluationAlerts />}
     {overview && navigation.view === 'casos' && <EvaluationCases cases={overview.casos} onSave={saveCase} />}
     {overview && navigation.view === 'historico' && <History rounds={overview.rodadas} link={link} />}

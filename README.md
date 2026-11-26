@@ -166,3 +166,11 @@ Em **Casos**, adicione ou edite entradas. Cada edição exige um motivo e guarda
 Clique em **Rodar avaliação**, anote o que mudou e inicie a rodada. Use **Resultados** para filtrar os casos e **Histórico** para reabrir uma rodada anterior. O painel conduz os casos um por vez e salva cada resultado. Se a página for fechada durante a rodada, reabra a área para continuar. O placar inclui os casos respondidos que você já marcou. Uma sugestão de marcação só entra no placar depois que você escolher e salvar a marcação.
 
 A aba **Alertas** mostra detecções de possíveis instruções nas mensagens do chat, com tipo, datas e identificador. O alerta fica disponível após a expiração da conversa e guarda apenas esses dados. A avaliação exibe a detecção no próprio resultado. A migração `database/chat-instrucoes.sql` percorre as mensagens existentes por busca de texto e informa o número de registros marcados.
+
+## Custos do assistente
+
+No painel de administração, abra **Custos** para consultar chamadas, tempo médio e estimativas. A medição começa após a instalação de `database/custos-ia.sql`. A estimativa usa o valor do plano pago do Gemini, com US$ 0,30 por milhão de tokens de entrada e US$ 2,50 por milhão de tokens de saída como preços iniciais. A saída inclui os tokens de raciocínio reportados. Informe a cotação no painel para ver valores em reais. Alterações nos preços recalculam as estimativas.
+
+O custo médio e a projeção de mil usos são baseados nas chamadas do app com tokens medidos. Chamadas sem contagem completa aparecem no total de chamadas e ficam fora da estimativa. Avaliações têm medição própria e ficam fora do limite do app.
+
+O limite começa em 30 chamadas ao modelo por navegador por dia, no horário de Brasília. Cada nova chamada ao Gemini, inclusive uma tentativa adicional após erro, consome uma unidade. Encerrar ou iniciar outra conversa no mesmo navegador mantém a cota. Outro navegador, outro dispositivo ou a limpeza do cookie cria outra identificação. O histórico de custos guarda apenas medidas da chamada. Os contadores anônimos vencidos são descartados diariamente.

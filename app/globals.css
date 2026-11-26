@@ -238,3 +238,20 @@
 .evaluation-instruction{color:#77500c;background:#fff3d8;border-radius:7px;margin:8px 0;padding:7px 10px;font-size:13px}
 .evaluation-nav{gap:clamp(6px,3vw,20px)}
 @media(max-width:680px){.evaluation-alerts li>div:nth-child(2){grid-column:1/-1;grid-row:2}}
+
+.costs-view, .costs-panel { display: grid; gap: 16px; }
+.costs-toolbar { display: flex; align-items: start; justify-content: space-between; gap: 16px; }
+.costs-toolbar h2 { margin-bottom: 6px; }
+.costs-toolbar .field { min-width: 160px; }
+.costs-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.costs-projections, .costs-settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.costs-metrics div { padding: 14px; border: 1px solid var(--line); border-radius: 9px; background: var(--soft); }
+.costs-metrics dt { color: var(--muted); font-size: 13px; line-height: 1.45; }
+.costs-metrics dd { margin: 6px 0 0; font-size: 19px; font-weight: 700; overflow-wrap: anywhere; }
+.costs-metrics dd + dd { font-size: 14px; color: var(--muted); font-weight: 550; }
+.costs-panel h3 { font-size: 17px; }
+@media (max-width: 580px) {
+  .evaluation-nav { flex-wrap: wrap; gap: 6px 12px; }
+  .costs-toolbar { flex-direction: column; }
+  .costs-metrics, .costs-settings-grid { grid-template-columns: minmax(0, 1fr); }
+}

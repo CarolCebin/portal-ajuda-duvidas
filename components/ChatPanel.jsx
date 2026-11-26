@@ -7,6 +7,7 @@ export default function ChatPanel({ topics = [], navigate }) {
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
+  const [limitNotice, setLimitNotice] = useState('');
   const [text, setText] = useState('');
   const [notice, setNotice] = useState('');
   const lock = useRef(false);
@@ -34,7 +35,7 @@ export default function ChatPanel({ topics = [], navigate }) {
   useEffect(() => { if (messages.length) end.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, [messages.length]);
   async function send(action, retryBody = null) {
     if (lock.current) return;
-    lock.current = true; setPending(true); setError(''); setNotice('');
+    lock.current = true; setPending(true); setError(''); setNotice(''); setLimitNotice('');
     const body = retryBody || { acao: action, requestId: crypto.randomUUID(), sessaoId: session?.id, versao: session?.versao,
       ...(action === 'mensagem' ? { texto: text } : {}) };
     retry.current = body;
@@ -42,6 +43,11 @@ export default function ChatPanel({ topics = [], navigate }) {
       const response = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), signal: AbortSignal.timeout(45000) });
       const result = await response.json();
       if (!response.ok) {
+        if (result.limiteDiario) {
+          retry.current = null;
+          setLimitNotice(result.error);
+          return;
+        }
         if (result.expirada) { setView(previous => ({ ...previous, sessao: null, mensagens: [] })); retry.current = null; }
         if (response.status === 503 && result.disponivel === false) setView(previous => ({ ...previous, disponivel: false }));
         if (response.status === 409) { await refresh(); }
@@ -76,6 +82,7 @@ export default function ChatPanel({ topics = [], navigate }) {
 
   return <section className="chat-panel" aria-label="Conversa com o assistente" aria-busy={pending || loading}>
     {notice && <p className="chat-notice" role="status">{notice}</p>}
+    {limitNotice && <p className="chat-notice" role="alert">{limitNotice}</p>}
     {view.disponivel === false && <p className="chat-notice" role="status">O assistente está indisponível no momento. Você ainda pode consultar os tópicos da central.</p>}
 
     {!messages.length && view.disponivel !== false && <div className="chat-intro">
